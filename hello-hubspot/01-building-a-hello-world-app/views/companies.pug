@@ -1,0 +1,13 @@
+doctype html
+html 
+    head 
+        title= `${title}`
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        link(rel="stylesheet", href="/css/style.css")
+    body    
+        h1 Companies
+        .cards 
+            each company in data
+                .card 
+                    h2.card__name #{company.properties.name}  #{company.id}
+                    p.card__email #{company.properties.domain}
