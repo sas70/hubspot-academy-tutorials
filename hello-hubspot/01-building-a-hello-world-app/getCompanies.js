@@ -4,7 +4,7 @@ const hubspot = require("@hubspot/api-client");
 require("dotenv").config();
 
 // read the private app access token from the environment variable PRIVATE_APP_ACCESS
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
+const ACCESS_TOKEN = process.env.PRIVATE_APP_ACCESS_DEV;
 
 const hubspotClient = new hubspot.Client({ accessToken: ACCESS_TOKEN });
 
@@ -16,5 +16,5 @@ const allCompanies = hubspotClient.crm.companies
     console.log(results);
   })
   .catch((err) => {
-    console.error(err);
+    console.error(err.message);
   });
