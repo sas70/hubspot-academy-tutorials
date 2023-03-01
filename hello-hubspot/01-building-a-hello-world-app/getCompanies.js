@@ -21,3 +21,6 @@ const allCompanies = hubspotClient.crm.companies
   .catch((err) => {
     console.error(err.message);
   });
+
+
+

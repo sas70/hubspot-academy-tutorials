@@ -10,14 +10,14 @@ const hubspotClient = new hubspot.Client({ accessToken: ACCESS_TOKEN });
 
 const contactObj = {
   properties: {
-    firstname: "David",
-    lastname: "Copperfield",
+    firstname: "David44",
+    lastname: "Copperfield44",
   },
 };
 const companyObj = {
   properties: {
-    domain: "PETSMART.com",
-    name: "PetSmart Stores Inc.",
+    domain: "PETSMART44.com",
+    name: "PetSmart Stores In44.",
   },
 };
 
@@ -34,27 +34,36 @@ async function createContactAndCompany() {
 }
 
 (async () => {
-  const { createContactResponse, createCompanyResponse } = await createContactAndCompany();
+  const { createContactResponse, createCompanyResponse } =
+    await createContactAndCompany();
 
   const contactId = createContactResponse.id;
   const companyId = createCompanyResponse.id;
 
-  // const contactId = "251";
-  // const companyId = "14912563626";
-  const url = `https://api.hubapi.com/crm/v3/objects/contacts/${contactId}/associations/companies/${companyId}`;
+  const url = `https://api.hubapi.com/crm/v3/associations/Contacts/Companies/batch/create`;
 
-  const data = {
-    category: "CUSTOM",
-    definitionId: 1,
+  ///request body
+  request_body = {
+    inputs: [
+      {
+        from: {
+          id: contactId,
+        },
+        to: {
+          id: companyId,
+        },
+        type: "contact_to_company",
+      },
+    ],
   };
 
   const options = {
-    method: "PUT",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${ACCESS_TOKEN}`,
     },
-    body: JSON.stringify(data),
+    body: request_body ? JSON.stringify(request_body) : null,
   };
 
   const response = await fetch(url, options);
@@ -69,3 +78,5 @@ async function createContactAndCompany() {
   }
   console.log(responseData);
 })();
+
+// new code from the docs:
