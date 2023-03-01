@@ -1,6 +1,5 @@
 // Description: This script will get all properties for a company in your HubSpot account
 
-const hubspot = require("@hubspot/api-client");
 const fetch = require("node-fetch");
 require("dotenv").config();
 
