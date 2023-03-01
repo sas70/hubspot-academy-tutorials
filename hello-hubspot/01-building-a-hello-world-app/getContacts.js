@@ -14,6 +14,9 @@ const allContacts = hubspotClient.crm.contacts
   .getAll()
   .then((results) => {
     console.log(results);
+    console.log(
+      "There are " + results.length + " contacts in your HubSpot account"
+    );
   })
   .catch((err) => {
     console.error(err.message);

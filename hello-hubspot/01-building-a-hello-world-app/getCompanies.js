@@ -14,6 +14,9 @@ const allCompanies = hubspotClient.crm.companies
   .getAll()
   .then((results) => {
     console.log(results);
+    console.log(
+      "There are " + results.length + " companies in your HubSpot account"
+    );
   })
   .catch((err) => {
     console.error(err.message);
