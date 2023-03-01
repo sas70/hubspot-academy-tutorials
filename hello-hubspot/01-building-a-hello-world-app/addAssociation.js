@@ -1,4 +1,5 @@
 // Description: This script will create a contact and a company, then associate them together.
+// Using these docs: https://developers.hubspot.com/docs/api/crm/associations/v3
 
 const hubspot = require("@hubspot/api-client");
 const fetch = require("node-fetch");
@@ -10,14 +11,14 @@ const hubspotClient = new hubspot.Client({ accessToken: ACCESS_TOKEN });
 
 const contactObj = {
   properties: {
-    firstname: "David44",
-    lastname: "Copperfield44",
+    firstname: "David5",
+    lastname: "Copperfield55",
   },
 };
 const companyObj = {
   properties: {
-    domain: "PETSMART44.com",
-    name: "PetSmart Stores In44.",
+    domain: "PETSMART55.com",
+    name: "PetSmart Stores 55 Inc.",
   },
 };
 
@@ -63,7 +64,7 @@ async function createContactAndCompany() {
       "Content-Type": "application/json",
       Authorization: `Bearer ${ACCESS_TOKEN}`,
     },
-    body: request_body ? JSON.stringify(request_body) : null,
+    body: JSON.stringify(request_body),
   };
 
   const response = await fetch(url, options);
@@ -78,5 +79,3 @@ async function createContactAndCompany() {
   }
   console.log(responseData);
 })();
-
-// new code from the docs:
