@@ -1,3 +1,5 @@
+// Description: This script will create a contact and a company, then associate them together.
+
 const hubspot = require("@hubspot/api-client");
 const fetch = require("node-fetch");
 require("dotenv").config();
@@ -32,15 +34,13 @@ async function createContactAndCompany() {
 }
 
 (async () => {
-  const { createContactResponse, createCompanyResponse } =
-    await createContactAndCompany();
+  const { createContactResponse, createCompanyResponse } = await createContactAndCompany();
 
   const contactId = createContactResponse.id;
   const companyId = createCompanyResponse.id;
 
   // const contactId = "251";
   // const companyId = "14912563626";
-
   const url = `https://api.hubapi.com/crm/v3/objects/contacts/${contactId}/associations/companies/${companyId}`;
 
   const data = {
