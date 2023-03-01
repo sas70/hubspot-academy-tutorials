@@ -2,8 +2,9 @@
 
 const fetch = require("node-fetch");
 require("dotenv").config();
-
 const ACCESS_TOKEN = process.env.PRIVATE_APP_ACCESS_PROD;
+companies_count = 0;
+const companies_max = 1;
 
 // read the properties from the json file and create a list of properties to pass to the API
 const fs = require("fs");
@@ -35,13 +36,19 @@ const options = {
   }
   // console log only those properties that are not null
   responseData["results"].forEach((company) => {
-    const companyProperties = Object.keys(company.properties);
-    companyProperties.forEach((property) => {
-      if (company.properties[property] !== null) {
-        console.log(property, company); // .properties[property]);
-      }
-    });
+    if (companies_count === companies_max) {
+      return;
+    } else {
+      const companyProperties = Object.keys(company.properties);
+      companyProperties.forEach((property) => {
+        if (company.properties[property] !== null) {
+          console.log(property, company); //
+        }
+      });
+      companies_count++;
+    }
   });
+
   //
-  console.log("Great! it worked ");
+  console.log(`Great! it worked and I printed ${companies_count} companies`);
 })();

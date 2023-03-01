@@ -14,7 +14,7 @@ const PRIVATE_APP_ACCESS_DEV = process.env.PRIVATE_APP_ACCESS_DEV;
 
 app.listen(3000, () => console.log("Listening on http://localhost:3000"));
 const headers = {
-  Authorization: `Bearer ${PRIVATE_APP_ACCESS_PROD}`,
+  Authorization: `Bearer ${PRIVATE_APP_ACCESS_DEV}`,
   "Content-Type": "application/json",
 };
 
