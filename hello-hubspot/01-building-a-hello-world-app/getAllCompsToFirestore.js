@@ -1,4 +1,4 @@
-// Description: This script gets the properties of a company from HubSpot and saves them to Firestore
+// Description: This script gets the properties of one company at a time  from HubSpot and saves them to Firestore
 
 //Initialize the Firebase Admin SDK
 const admin = require("firebase-admin");
