@@ -1,4 +1,4 @@
-// Description: This script will get all properties for a company in your HubSpot account
+// Description: This script will get all properties for a certain number (companies_max) of  companies in your HubSpot account
 
 const fetch = require("node-fetch");
 require("dotenv").config();
