@@ -1,3 +1,5 @@
+// Description: This script gets the properties of a company from HubSpot and saves them to Firestore
+
 const fetch = require("node-fetch");
 require("dotenv").config();
 const ACCESS_TOKEN = process.env.PRIVATE_APP_ACCESS_PROD;
@@ -9,7 +11,10 @@ const properties = JSON.parse(
 );
 const properties_list = properties.map((property) => property.name).join(",");
 
+// input the company ID
 const companyId = "10060298063";
+
+// create the url & options
 const url = `https://api.hubapi.com/crm/v3/objects/companies/${companyId}?limit=10&properties=${properties_list}`;
 
 const options = {
@@ -20,8 +25,9 @@ const options = {
   },
 };
 
-let responseData; // declare variable here
+let responseData;
 
+// start the async function to get the properties from HubSpot
 (async () => {
   const response = await fetch(url, options);
   if (!response.ok) {

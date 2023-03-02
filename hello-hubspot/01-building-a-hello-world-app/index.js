@@ -3,7 +3,6 @@ const axios = require("axios");
 require("dotenv").config();
 
 const app = express();
-
 app.set("view engine", "pug");
 
 app.use(express.static(__dirname + "/public"));
