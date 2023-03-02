@@ -4,7 +4,14 @@ const hubspot = require("@hubspot/api-client");
 require("dotenv").config();
 
 // read the private app access token from the environment variable PRIVATE_APP_ACCESS
-const ACCESS_TOKEN = process.env.PRIVATE_APP_ACCESS_PROD;
+production = false;
+json_file = "test_companies.json";
+const ACCESS_TOKEN = process.env.PRIVATE_APP_ACCESS_DEV;
+
+if (production == true) {
+  ACCESS_TOKEN = process.env.PRIVATE_APP_ACCESS_PROD;
+  json_file = "simple_companies.json";
+}
 
 const hubspotClient = new hubspot.Client({ accessToken: ACCESS_TOKEN });
 
@@ -33,7 +40,7 @@ getCompanies();
 // Function to save companies in a JSON file
 async function saveComapnies(companies) {
   const fs = require("fs");
-  fs.writeFile("simple_companies.json", JSON.stringify(companies), (err) => {
+  fs.writeFile(json_file, JSON.stringify(companies), (err) => {
     if (err) {
       console.log("Error writing file", err);
     } else {
