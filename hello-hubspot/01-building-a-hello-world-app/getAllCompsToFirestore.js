@@ -62,7 +62,12 @@ const options = {
       );
 
       // delete all null properties & those that start with "hs_analytics"
-      nonNull_properties = await deleteNullProperties(companyId, responseData);
+      no_action = false;
+      nonNull_properties = await deleteNullProperties(
+        companyId,
+        responseData,
+        no_action
+      );
 
       // save the properties to Firestore
       await saveToFirestore(nonNull_properties);
@@ -91,12 +96,12 @@ async function getLists() {
 }
 
 // function to delete all null properties & those that start with "hs_analytics"
-async function deleteNullProperties(companyId, responseData) {
+async function deleteNullProperties(companyId, responseData, no_action) {
   let nonNull_properties = responseData.properties;
   for (let key in responseData.properties) {
     if (
       responseData.properties[key] === null ||
-      key.startsWith("hs_analytics")
+      (key.startsWith("hs_analytics") && no_action)
     ) {
       delete nonNull_properties[key];
     }

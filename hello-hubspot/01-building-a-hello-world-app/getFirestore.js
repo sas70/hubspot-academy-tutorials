@@ -58,3 +58,33 @@ setTimeout(() => {
   console.log(`public_list  : ${public_list}`);
 }, 5000);
 // wait 5 seconds to ensure myGlobalObject.data is assigned
+
+const companies = {
+  "A10 Networks": "0001324433",
+  Affirm: "0001759822",
+  "Arthur J. Gallagher & Co.": "0000350797",
+  "Bill.com": "0001720760",
+  "Cadence Bank": "0000764564",
+  Clarivate: "0001755044",
+  "Dover Corporation": "0000029905",
+  Dropbox: "0001467623",
+  Globalpayments: "0001123360",
+  "Houghton Mifflin Harcourt": "0001493160",
+  "Hubspot, Inc.": "0001408108",
+  K12: "0001101215",
+  Navient: "0001593538",
+  Newegg: "0001490291",
+  "NextEra Energy, Inc.": "0000753309",
+  "Northern Trust Corporation": "0000073124",
+  "Otis Elevator Company": "0001644778",
+  "Procore Technologies, Inc": "0001736566",
+  "R1 RCM": "0001646203",
+  "The Greenbrier Companies": "0000923123",
+  "Twist Bioscience": "0001746798",
+  "US Bank": "0000036104",
+  Udemy: "0001667296",
+  Zuora: "0001641641",
+};
+
+// Access the CIK number of a company
+console.log(companies["A10 Networks"]); // Output: "0001324433"
