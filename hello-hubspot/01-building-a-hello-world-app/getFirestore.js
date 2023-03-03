@@ -131,7 +131,7 @@ async function mergeObjects(companies_id, companies) {
 async function writeCompaniesIdNameCik(companies_id_name_cik) {
   const companies_id_name_cik_ref = admin
     .firestore()
-    .collection("companies_id_name_cik");
+    .collection("public_companies");
   for (const [key, value] of Object.entries(companies_id_name_cik)) {
     await companies_id_name_cik_ref.doc(key).set(value);
   }
