@@ -50,6 +50,13 @@ const options = {
       }
 
       let properties_count = Object.keys(responseData.properties).length;
+      // check if the cik field is included in the properties of the company
+      if (!responseData.properties.hasOwnProperty("cik")) {
+        throw new Error(
+          `Hey, the company with ID ${companyId} does not have the cik field`
+        );
+      }
+
       let hs_companyId = responseData.id;
       if (hs_companyId !== companyId) {
         throw new Error(
@@ -69,8 +76,16 @@ const options = {
         no_action
       );
 
+      // check if the cik field is included in the properties of the company
+      if (!nonNull_properties.hasOwnProperty("cik")) {
+        console.log(nonNull_properties);
+        throw new Error(
+          `Hey, the company with ID ${companyId} does not have the cik field - nonNull_properties`
+        );
+      }
+
       // save the properties to Firestore
-      await saveToFirestore(nonNull_properties);
+      // await saveToFirestore(nonNull_properties);
     })();
   }
 })();
@@ -100,9 +115,13 @@ async function deleteNullProperties(companyId, responseData, no_action) {
   let nonNull_properties = responseData.properties;
   for (let key in responseData.properties) {
     if (
-      responseData.properties[key] === null ||
-      (key.startsWith("hs_analytics") && no_action)
+      (responseData.properties[key] === null ||
+        key.startsWith("hs_analytics")) &&
+      no_action
     ) {
+      console.log(
+        `Deleting the property ${key} with value ${responseData.properties[key]}`
+      );
       delete nonNull_properties[key];
     }
   }
