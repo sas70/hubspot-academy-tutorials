@@ -40,6 +40,31 @@ let options = {
 })();
 
 // ----------------------- Functions ----------------------------
+// Function - Read the firestore collection "public_companies" into a list of companies' id & cik
+async function readFirestore() {
+  let companies_list = [];
+  let companiesRef = admin.firestore().collection(firtestoreCollection);
+  let snapshot = await companiesRef.get();
+  snapshot.forEach((doc) => {
+    companies_list.push(doc.data());
+  });
+  console.log(`companies_list.length: ${companies_list.length}`);
+  return companies_list;
+}
+
+// Function - Get the companies' id & cik from the collection "public_companies"
+async function getCompaniesIdCik(companies_list) {
+  let companies_id_cik = [];
+  for (let i = 0; i < companies_list.length; i++) {
+    let company = companies_list[i];
+    let companyId = company.companyId;
+    let cik = company.cik;
+    companies_id_cik.push({ companyId, cik });
+  }
+  console.log(`companies_id_cik.length: ${companies_id_cik.length}`);
+  return companies_id_cik;
+}
+
 // Function - Update the properties of one company at a time in HubSpot
 async function updateCompToHubSpot(companyId, properties_dict) {
   // update the options.body
@@ -68,31 +93,4 @@ async function updateCompToHubSpot(companyId, properties_dict) {
       2
     )}`
   );
-}
-
-// Function - Read the firestore collection "public_companies" into a list of companies' id & cik
-async function readFirestore() {
-  let companies_list = [];
-  let companiesRef = admin.firestore().collection(firtestoreCollection);
-  let snapshot = await companiesRef.get();
-  snapshot.forEach((doc) => {
-    companies_list.push(doc.data());
-  });
-  // console.log(`companies_list: ${JSON.stringify(companies_list, null, 2)}`);
-  console.log(`companies_list.length: ${companies_list.length}`);
-  return companies_list;
-}
-
-// Function - Get the companies' id & cik from the collection "public_companies"
-async function getCompaniesIdCik(companies_list) {
-  let companies_id_cik = [];
-  for (let i = 0; i < companies_list.length; i++) {
-    let company = companies_list[i];
-    let companyId = company.companyId;
-    let cik = company.cik;
-    companies_id_cik.push({ companyId, cik });
-  }
-  // console.log(`companies_id_cik: ${JSON.stringify(companies_id_cik, null, 2)}`);
-  console.log(`companies_id_cik.length: ${companies_id_cik.length}`);
-  return companies_id_cik;
 }
