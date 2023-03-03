@@ -24,7 +24,7 @@ const options = {
   },
 };
 
-const companies = {
+const companies_original = {
   "A10 Networks": "0001324433",
   Affirm: "0001759822",
   "Arthur J. Gallagher & Co.": "0000350797",
@@ -50,6 +50,12 @@ const companies = {
   Udemy: "0001667296",
   Zuora: "0001641641",
 };
+
+// convert the companies dictionary to lower case
+const companies = {};
+for (const [key, value] of Object.entries(companies_original)) {
+  companies[key.toLowerCase()] = value;
+}
 
 // ----------------------- Main ----------------------------
 // Get the data from Firestore and assign it to a global object
@@ -85,20 +91,14 @@ public_list = [];
     }
   }
   console.log(`1- public_companies_count: ${public_companies_count}`);
-  // console.log(`2- public_list  : ${public_list}`);
 
   let companies_id = await getCompaniesId(myGlobalObject.data);
+  console.log("4- companies ....", companies);
   let companies_id_name_cik = await mergeObjects(companies_id, companies);
   await writeCompaniesIdNameCik(companies_id_name_cik);
 })();
 
-// wait 5 seconds to ensure myGlobalObject.data is assigned
-// console.log("1- all companies: ", myGlobalObject.data);
-// get size of an object
 console.log("3- len ....", Object.keys(companies).length); // Output: 24
-
-// Function - Access the CIK number of a company
-console.log("4- value...", companies["Zuora"]); // Output: "0001324433"
 
 // get a dict of companies names & id from Firestore
 async function getCompaniesId(myData) {
@@ -112,8 +112,9 @@ async function getCompaniesId(myData) {
 // Function - merge the two objects in a new object with the id as the key and the name & cik as the value
 async function mergeObjects(companies_id, companies) {
   const companies_id_name_cik = {};
-  for (const [key, value] of Object.entries(companies_id)) {
+  for (let [key, value] of Object.entries(companies_id)) {
     // if companies[key] is undefined, then set it to "0000000000"
+    key = key.toLowerCase();
     if (companies[key] === undefined) {
       companies[key] = "0000000000";
     }
@@ -121,6 +122,7 @@ async function mergeObjects(companies_id, companies) {
     companies_id_name_cik[value] = {
       name: key,
       cik: companies[key],
+      companyId: value,
     };
   }
   console.log("7- companies_id_name_cik ....", companies_id_name_cik);
