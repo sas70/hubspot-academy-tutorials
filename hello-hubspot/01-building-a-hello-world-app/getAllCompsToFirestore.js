@@ -85,7 +85,7 @@ const options = {
       }
 
       // save the properties to Firestore
-      // await saveToFirestore(nonNull_properties);
+      await saveToFirestore(nonNull_properties);
     })();
   }
 })();
