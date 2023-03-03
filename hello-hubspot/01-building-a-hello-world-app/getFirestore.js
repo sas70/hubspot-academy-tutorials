@@ -1,4 +1,4 @@
-// Description: This script gets data from Firestore and saves it to a CSV file
+// Description: The code initializes the Firebase Admin SDK, imports the necessary modules, and defines a list of companies. It then fetches data from Firestore, counts the number of public companies and creates a list of their names, gets a dictionary of companies' names and IDs from Firestore, merges this dictionary with the list of companies and assigns names and CIKs to each ID. The script then writes the resulting dictionary to a Firestore collection.
 
 //Initialize the Firebase Admin SDK
 const admin = require("firebase-admin");
