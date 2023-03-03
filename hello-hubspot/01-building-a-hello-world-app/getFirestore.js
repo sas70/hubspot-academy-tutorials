@@ -6,7 +6,7 @@ const serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
-firtestoreCollection = "hubSpot_companies";
+firestoreCollection = "hubSpot_companies";
 
 // import the required modules
 const fetch = require("node-fetch");
@@ -26,10 +26,10 @@ const options = {
 // ----------------------- Main ----------------------------
 // Get the data from Firestore and assign it to a global object
 const myGlobalObject = {};
-(async () => {
+async function getFromFirestore() {
   const snapshot = await admin
     .firestore()
-    .collection(firtestoreCollection)
+    .collection(firestoreCollection)
     .get();
   if (snapshot.empty) {
     console.log("No matching documents.");
@@ -39,14 +39,16 @@ const myGlobalObject = {};
   snapshot.forEach((doc) => {
     myGlobalObject.data.push(doc.data());
   });
-  console.log(myGlobalObject.data.length);
-})();
+  console.log("0- all lenght ---", myGlobalObject.data.length);
+  return myGlobalObject.data;
+}
 
 // ----------------------- End of Main ----------------------------
 // count how many companies have is_public = true
 let public_companies_count = 0;
 public_list = [];
-setTimeout(() => {
+(async () => {
+  myGlobalObject.data = await getFromFirestore();
   for (let i = 0; i < myGlobalObject.data.length; i++) {
     if (myGlobalObject.data[i].is_public === "true") {
       public_companies_count++;
@@ -54,10 +56,16 @@ setTimeout(() => {
       public_list.push(myGlobalObject.data[i].name);
     }
   }
-  console.log(`public_companies_count: ${public_companies_count}`);
-  console.log(`public_list  : ${public_list}`);
-}, 5000);
+  console.log(`1- public_companies_count: ${public_companies_count}`);
+  console.log(`2- public_list  : ${public_list}`);
+
+  let companiesId = {};
+  companiesId = await getCompaniesId(myGlobalObject.data);
+  console.log("5- companiesId  ", companiesId);
+})();
+
 // wait 5 seconds to ensure myGlobalObject.data is assigned
+// console.log("1- all companies: ", myGlobalObject.data);
 
 const companies = {
   "A10 Networks": "0001324433",
@@ -86,5 +94,27 @@ const companies = {
   Zuora: "0001641641",
 };
 
+// get size of an object
+console.log("3- len ....", Object.keys(companies).length); // Output: 24
+
 // Access the CIK number of a company
-console.log(companies["A10 Networks"]); // Output: "0001324433"
+console.log("4- value...", companies["Zuora"]); // Output: "0001324433"
+
+// get a dict of companies names & id from Firestore
+async function getCompaniesId(myData) {
+  let companies_id = {};
+  for (let i = 0; i < myData.length; i++) {
+    companies_id[myData[i].name] = myData[i].companyId;
+  }
+  return companies_id;
+}
+
+// // merge the two objects in a new object with the id as the key and the name & cik as the value
+// const companies_id_name_cik = {};
+// for (const [key, value] of Object.entries(companies_id)) {
+//   companies_id_name_cik[value] = {
+//     name: key,
+//     cik: companies[key],
+//   };
+// }
+// console.log("7- companies_id_name_cik ....", companies_id_name_cik);
