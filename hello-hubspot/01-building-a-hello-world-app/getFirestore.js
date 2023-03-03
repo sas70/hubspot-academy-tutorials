@@ -23,6 +23,33 @@ const options = {
   },
 };
 
+const companies = {
+  "A10 Networks": "0001324433",
+  Affirm: "0001759822",
+  "Arthur J. Gallagher & Co.": "0000350797",
+  "Bill.com": "0001720760",
+  "Cadence Bank": "0000764564",
+  Clarivate: "0001755044",
+  "Dover Corporation": "0000029905",
+  Dropbox: "0001467623",
+  Globalpayments: "0001123360",
+  "Houghton Mifflin Harcourt": "0001493160",
+  "Hubspot, Inc.": "0001408108",
+  K12: "0001101215",
+  Navient: "0001593538",
+  Newegg: "0001490291",
+  "NextEra Energy, Inc.": "0000753309",
+  "Northern Trust Corporation": "0000073124",
+  "Otis Elevator Company": "0001644778",
+  "Procore Technologies, Inc": "0001736566",
+  "R1 RCM": "0001646203",
+  "The Greenbrier Companies": "0000923123",
+  "Twist Bioscience": "0001746798",
+  "US Bank": "0000036104",
+  Udemy: "0001667296",
+  Zuora: "0001641641",
+};
+
 // ----------------------- Main ----------------------------
 // Get the data from Firestore and assign it to a global object
 const myGlobalObject = {};
@@ -57,47 +84,19 @@ public_list = [];
     }
   }
   console.log(`1- public_companies_count: ${public_companies_count}`);
-  console.log(`2- public_list  : ${public_list}`);
+  // console.log(`2- public_list  : ${public_list}`);
 
-  let companiesId = {};
-  companiesId = await getCompaniesId(myGlobalObject.data);
-  console.log("5- companiesId  ", companiesId);
+  let companies_id = await getCompaniesId(myGlobalObject.data);
+  let companies_id_name_cik = await mergeObjects(companies_id, companies);
+  await writeCompaniesIdNameCik(companies_id_name_cik);
 })();
 
 // wait 5 seconds to ensure myGlobalObject.data is assigned
 // console.log("1- all companies: ", myGlobalObject.data);
-
-const companies = {
-  "A10 Networks": "0001324433",
-  Affirm: "0001759822",
-  "Arthur J. Gallagher & Co.": "0000350797",
-  "Bill.com": "0001720760",
-  "Cadence Bank": "0000764564",
-  Clarivate: "0001755044",
-  "Dover Corporation": "0000029905",
-  Dropbox: "0001467623",
-  Globalpayments: "0001123360",
-  "Houghton Mifflin Harcourt": "0001493160",
-  "Hubspot, Inc.": "0001408108",
-  K12: "0001101215",
-  Navient: "0001593538",
-  Newegg: "0001490291",
-  "NextEra Energy, Inc.": "0000753309",
-  "Northern Trust Corporation": "0000073124",
-  "Otis Elevator Company": "0001644778",
-  "Procore Technologies, Inc": "0001736566",
-  "R1 RCM": "0001646203",
-  "The Greenbrier Companies": "0000923123",
-  "Twist Bioscience": "0001746798",
-  "US Bank": "0000036104",
-  Udemy: "0001667296",
-  Zuora: "0001641641",
-};
-
 // get size of an object
 console.log("3- len ....", Object.keys(companies).length); // Output: 24
 
-// Access the CIK number of a company
+// Function - Access the CIK number of a company
 console.log("4- value...", companies["Zuora"]); // Output: "0001324433"
 
 // get a dict of companies names & id from Firestore
@@ -109,12 +108,32 @@ async function getCompaniesId(myData) {
   return companies_id;
 }
 
-// // merge the two objects in a new object with the id as the key and the name & cik as the value
-// const companies_id_name_cik = {};
-// for (const [key, value] of Object.entries(companies_id)) {
-//   companies_id_name_cik[value] = {
-//     name: key,
-//     cik: companies[key],
-//   };
-// }
-// console.log("7- companies_id_name_cik ....", companies_id_name_cik);
+// Function - merge the two objects in a new object with the id as the key and the name & cik as the value
+async function mergeObjects(companies_id, companies) {
+  const companies_id_name_cik = {};
+  for (const [key, value] of Object.entries(companies_id)) {
+    // if companies[key] is undefined, then set it to "0000000000"
+    if (companies[key] === undefined) {
+      companies[key] = "0000000000";
+    }
+
+    companies_id_name_cik[value] = {
+      name: key,
+      cik: companies[key],
+    };
+  }
+  console.log("7- companies_id_name_cik ....", companies_id_name_cik);
+
+  return companies_id_name_cik;
+}
+
+// Function - write companies_id_name_cik to a Firestore collection
+async function writeCompaniesIdNameCik(companies_id_name_cik) {
+  const companies_id_name_cik_ref = admin
+    .firestore()
+    .collection("companies_id_name_cik");
+  for (const [key, value] of Object.entries(companies_id_name_cik)) {
+    await companies_id_name_cik_ref.doc(key).set(value);
+  }
+  console.log("8- companies_id_name_cik written to Firestore");
+}
