@@ -6,7 +6,8 @@ const serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
-firestoreCollection = "hubSpot_companies";
+hs_firestoreCollection = "hubSpot_companies";
+cik_firestoreCollection = "public_companies";
 
 // import the required modules
 const fetch = require("node-fetch");
@@ -56,7 +57,7 @@ const myGlobalObject = {};
 async function getFromFirestore() {
   const snapshot = await admin
     .firestore()
-    .collection(firestoreCollection)
+    .collection(hs_firestoreCollection)
     .get();
   if (snapshot.empty) {
     console.log("No matching documents.");
@@ -131,7 +132,7 @@ async function mergeObjects(companies_id, companies) {
 async function writeCompaniesIdNameCik(companies_id_name_cik) {
   const companies_id_name_cik_ref = admin
     .firestore()
-    .collection("public_companies");
+    .collection(cik_firestoreCollection);
   for (const [key, value] of Object.entries(companies_id_name_cik)) {
     await companies_id_name_cik_ref.doc(key).set(value);
   }
