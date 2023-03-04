@@ -1,11 +1,16 @@
 // Description: The code initializes the Firebase Admin SDK, imports the necessary modules, and defines a list of companies. It then fetches data from Firestore, counts the number of public companies and creates a list of their names, gets a dictionary of companies' names and IDs from Firestore, merges this dictionary with the list of companies and assigns names and CIKs to each ID. The script then writes the resulting dictionary to a Firestore collection.
 
-//Initialize the Firebase Admin SDK
+// Initialize the Firebase Admin SDK for backend access to Firestore
 const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
+
+// Get a reference to the Firestore database
+const db = admin.firestore();
+
+// define the collections
 hs_firestoreCollection = "hubSpot_companies";
 cik_firestoreCollection = "public_companies";
 
@@ -93,9 +98,18 @@ public_list = [];
   console.log(`1- public_companies_count: ${public_companies_count}`);
 
   let companies_id = await getCompaniesId(myGlobalObject.data);
-  console.log("4- companies ....", companies);
+  console.log("companies ....", companies);
   let companies_id_name_cik = await mergeObjects(companies_id, companies);
-  await writeCompaniesIdNameCik(companies_id_name_cik);
+
+  // Delete the existing collection
+  const batchSize = 10;
+  collectionName = cik_firestoreCollection;
+  await deleteCollection(collectionName, batchSize);
+  console.log(`The Collection {} was deleted successfully`, collectionName);
+
+  // Write the new collection
+  collectionName = cik_firestoreCollection;
+  await writeCompaniesIdNameCik(collectionName, companies_id_name_cik);
 })();
 
 console.log("3- len ....", Object.keys(companies).length); // Output: 24
@@ -131,12 +145,64 @@ async function mergeObjects(companies_id, companies) {
 }
 
 // Function - write companies_id_name_cik to a Firestore collection
-async function writeCompaniesIdNameCik(companies_id_name_cik) {
-  const companies_id_name_cik_ref = admin
-    .firestore()
-    .collection(cik_firestoreCollection);
-  for (const [key, value] of Object.entries(companies_id_name_cik)) {
-    await companies_id_name_cik_ref.doc(key).set(value);
-  }
-  console.log("8- companies_id_name_cik written to Firestore");
+async function writeCompaniesIdNameCik(collectionName, myDict) {
+  const collectionRef = db.collection(collectionName);
+  Object.values(myDict).forEach((docData) => {
+    const docId = docData.companyId;
+    const newDocRef = collectionRef.doc(docId);
+    newDocRef
+      .set(docData)
+      .then(() => {
+        console.log(`Document with ID ${docId} added successfully`);
+      })
+      .catch((error) => {
+        console.error(`Error adding document ID  ${docId} : `, error);
+      });
+  });
+
+  console.log("companies_id_name_cik written to Firestore");
+}
+
+// Function to delete a Firestore collection
+async function deleteCollection(collectionName, batchSize) {
+  const collectionRef = admin.firestore().collection(collectionName);
+  const query = collectionRef.orderBy("__name__").limit(batchSize);
+
+  return new Promise((resolve, reject) => {
+    deleteQueryBatch(query, batchSize, resolve, reject);
+  });
+}
+
+// Helper function to delete a batch of documents in a collection
+async function deleteQueryBatch(query, batchSize, resolve, reject) {
+  query
+    .get()
+    .then((snapshot) => {
+      // When there are no documents left, we are done
+      if (snapshot.size == 0) {
+        return 0;
+      }
+
+      // Delete documents in a batch
+      const batch = db.batch();
+      snapshot.docs.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      return batch.commit().then(() => {
+        return snapshot.size;
+      });
+    })
+    .then((numDeleted) => {
+      if (numDeleted === 0) {
+        resolve();
+        return;
+      }
+
+      // Recurse on the next batch
+      process.nextTick(() => {
+        deleteQueryBatch(query, batchSize, resolve, reject);
+      });
+    })
+    .catch(reject);
 }
