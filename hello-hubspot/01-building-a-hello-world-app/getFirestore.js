@@ -30,30 +30,30 @@ const options = {
 };
 // companies_original is a dictionary of public companies' names and IDs
 const companies_original = {
-  "A10 Networks": "0001324433",
-  Affirm: "0001759822",
-  "Arthur J. Gallagher & Co.": "0000350797",
-  "Bill.com": "0001720760",
-  "Cadence Bank": "0000764564",
-  Clarivate: "0001755044",
+  "A10 Networks": "0001580808",
+  Affirm: "0001820953",
+  "Arthur J. Gallagher & Co.": "0000354190",
+  "Bill.com": "0001786352",
+  // "Cadence Bank": "0000764564", Holding
+  Clarivate: "0001764046",
   "Dover Corporation": "0000029905",
   Dropbox: "0001467623",
   Globalpayments: "0001123360",
-  "Houghton Mifflin Harcourt": "0001493160",
+  "Houghton Mifflin Harcourt": "0001580156",
   "Hubspot, Inc.": "0001404655",
   K12: "0001101215",
   Navient: "0001593538",
-  Newegg: "0001490291",
-  "NextEra Energy, Inc.": "0000753309",
+  // Newegg: "0001474627", // foreign issuer
+  "NextEra Energy, Inc.": "0000753308",
   "Northern Trust Corporation": "0000073124",
-  "Otis Elevator Company": "0001644778",
-  "Procore Technologies, Inc": "0001736566",
-  "R1 RCM": "0001646203",
-  "The Greenbrier Companies": "0000923123",
-  "Twist Bioscience": "0001746798",
+  "Otis Elevator Company": "0001781335",
+  "Procore Technologies, Inc": "0001611052",
+  "R1 RCM": "0001910851",
+  "The Greenbrier Companies": "0000923120",
+  "Twist Bioscience": "0001581280",
   "US Bank": "0000036104",
-  Udemy: "0001667296",
-  Zuora: "0001641641",
+  Udemy: "0001607939",
+  Zuora: "0001423774",
 };
 
 // convert the companies dictionary to lower case
