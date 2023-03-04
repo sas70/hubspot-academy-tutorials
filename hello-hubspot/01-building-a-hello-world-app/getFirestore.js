@@ -35,7 +35,7 @@ const companies_original = {
   Dropbox: "0001467623",
   Globalpayments: "0001123360",
   "Houghton Mifflin Harcourt": "0001493160",
-  "Hubspot, Inc.": "0001408108",
+  "Hubspot, Inc.": "0001404655",
   K12: "0001101215",
   Navient: "0001593538",
   Newegg: "0001490291",

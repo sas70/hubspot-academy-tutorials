@@ -12,7 +12,7 @@ const serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
-firtestoreCollection = "public_companies";
+firestoreCollection = "public_companies";
 
 // create the options
 let options = {
@@ -43,7 +43,7 @@ let options = {
 // Function - Read the firestore collection "public_companies" into a list of companies' id & cik
 async function readFirestore() {
   let companies_list = [];
-  let companiesRef = admin.firestore().collection(firtestoreCollection);
+  let companiesRef = admin.firestore().collection(firestoreCollection);
   let snapshot = await companiesRef.get();
   snapshot.forEach((doc) => {
     companies_list.push(doc.data());
@@ -69,7 +69,6 @@ async function getCompaniesIdCik(companies_list) {
 async function updateCompToHubSpot(companyId, properties_dict) {
   // update the options.body
   options["body"] = JSON.stringify(properties_dict);
-
   const url = `https://api.hubapi.com/crm/v3/objects/companies/${companyId}`;
   console.log(`url: ${url}) `);
 
