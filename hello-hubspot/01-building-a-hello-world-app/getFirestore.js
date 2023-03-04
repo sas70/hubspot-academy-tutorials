@@ -28,7 +28,7 @@ const options = {
     Authorization: `Bearer ${ACCESS_TOKEN}`,
   },
 };
-
+// companies_original is a dictionary of public companies' names and IDs
 const companies_original = {
   "A10 Networks": "0001324433",
   Affirm: "0001759822",
@@ -98,7 +98,6 @@ public_list = [];
   console.log(`1- public_companies_count: ${public_companies_count}`);
 
   let companies_id = await getCompaniesId(myGlobalObject.data);
-  console.log("companies ....", companies);
   let companies_id_name_cik = await mergeObjects(companies_id, companies);
 
   // Delete the existing collection
@@ -139,7 +138,6 @@ async function mergeObjects(companies_id, companies) {
       companyId: value,
     };
   }
-  console.log("7- companies_id_name_cik ....", companies_id_name_cik);
 
   return companies_id_name_cik;
 }
