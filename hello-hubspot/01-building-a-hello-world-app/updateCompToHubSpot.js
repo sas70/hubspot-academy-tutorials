@@ -34,8 +34,9 @@ let options = {
       continue;
     }
     let properties_dict = await propsToChange(company);
-    await updateCompToHubSpot(properties_dict);
-    console.log("done with one company");
+    options["body"] = JSON.stringify(properties_dict);
+
+    await updateCompToHubSpot(properties_dict, options);
   }
 })();
 // how to stop the file here
@@ -64,8 +65,6 @@ async function propsToChange(company) {
     companyId: companyId,
   };
 
-  console.log(`properties_dict: ${JSON.stringify(properties_dict)}`);
-
   return properties_dict;
 }
 
@@ -81,15 +80,12 @@ async function readFirestore() {
 }
 
 // Function - Update the properties of one company at a time in HubSpot
-async function updateCompToHubSpot(properties_dict) {
-  // update the options.body
-  let companyId = properties_dict["companyId"];
-  options["body"] = JSON.stringify({ properties: properties_dict });
-  const url = `https://api.hubapi.com/crm/v3/objects/companies/${companyId}`;
+async function updateCompToHubSpot(properties_dict, options) {
+  let hs_companyId = properties_dict["companyId"];
+  const url = `https://api.hubapi.com/crm/v3/objects/companies/${hs_companyId}`;
   console.log(`url: ${url}) `);
 
   let responseData;
-
   const response = await fetch(url, options);
   if (!response.ok) {
     throw new Error(
