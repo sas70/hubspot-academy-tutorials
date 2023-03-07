@@ -27,19 +27,48 @@ let options = {
 // Iterate thru the companies' id & cik to call the function updateCompToHubSpot
 (async () => {
   let companies_list = await readFirestore();
-  let companies_id_cik = await getCompaniesIdCik(companies_list);
-  for (let i = 0; i < companies_id_cik.length; i++) {
-    let company = companies_id_cik[i];
-    let companyId = company.companyId;
-    let cik = company.cik;
-    let properties_dict = {
-      properties: { cik: cik },
-    };
-    await updateCompToHubSpot(companyId, properties_dict);
+  console.log(`companies_list.length: ${companies_list.length} `);
+  for (let company of companies_list) {
+    let cik = company["cik"];
+    if (cik == "0000000000") {
+      continue;
+    }
+    let properties_dict = await propsToChange(company);
+    // await updateCompToHubSpot(companyId, properties_dict);
+    console.log("done with one company");
   }
 })();
+// how to stop the file here
 
 // ----------------------- Functions ----------------------------
+
+// Function - Prepare the properties to update in HubSpot
+async function propsToChange(company) {
+  let properties_dict = {};
+  let cik = company["cik"];
+  let ticker = company["ticker"];
+  let sicNumber = company["sicNumber"];
+  let sicLabel = company["sicLabel"];
+  let FYE = company["FYE"];
+  let businessFullAddress = company["businessFullAddress"];
+  let companyId = company["companyId"];
+
+  // create the fields_dict
+  properties_dict = {
+    FYE: FYE,
+    "Street Address": businessFullAddress,
+    CIK: cik,
+    SIC_Label: sicLabel,
+    SIC_Number: sicNumber,
+    Ticker: ticker,
+    companyId: companyId,
+  };
+
+  console.log(`properties_dict: ${JSON.stringify(properties_dict)}`);
+
+  return properties_dict;
+}
+
 // Function - Read the firestore collection "public_companies" into a list of companies' id & cik
 async function readFirestore() {
   let companies_list = [];
@@ -48,27 +77,13 @@ async function readFirestore() {
   snapshot.forEach((doc) => {
     companies_list.push(doc.data());
   });
-  console.log(`companies_list.length: ${companies_list.length}`);
   return companies_list;
-}
-
-// Function - Get the companies' id & cik from the collection "public_companies"
-async function getCompaniesIdCik(companies_list) {
-  let companies_id_cik = [];
-  for (let i = 0; i < companies_list.length; i++) {
-    let company = companies_list[i];
-    let companyId = company.companyId;
-    let cik = company.cik;
-    companies_id_cik.push({ companyId, cik });
-  }
-  console.log(`companies_id_cik.length: ${companies_id_cik.length}`);
-  return companies_id_cik;
 }
 
 // Function - Update the properties of one company at a time in HubSpot
 async function updateCompToHubSpot(companyId, properties_dict) {
   // update the options.body
-  options["body"] = JSON.stringify(properties_dict);
+  options["body"] = JSON.stringify({ Properties: properties_dict });
   const url = `https://api.hubapi.com/crm/v3/objects/companies/${companyId}`;
   console.log(`url: ${url}) `);
 
