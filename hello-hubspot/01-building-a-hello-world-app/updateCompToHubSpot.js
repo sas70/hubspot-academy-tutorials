@@ -16,16 +16,6 @@ firestoreCollection = "public_companies";
 
 // create the options
 let properties_dict = {};
-// let options = {
-//   method: "PATCH",
-//   headers: {
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer ${ACCESS_TOKEN}`,
-//   },
-//   body: { properties: properties_dict },
-// };
-
-//   body: { properties: JSON.stringify(properties_dict) },
 
 // Iterate thru the companies' id & cik to call the function updateCompToHubSpot
 (async () => {
@@ -36,26 +26,14 @@ let properties_dict = {};
       continue;
     }
     let properties_dict = await propsToChange(company);
-    // options["body"] = properties_dict;
-    // let options = {
-    //   method: "PATCH",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${ACCESS_TOKEN}`,
-    //   },
-    //   body: { properties: properties_dict },
-    // };
-
     await updateCompToHubSpot(properties_dict);
   }
 })();
-// how to stop the file here
 
 // ----------------------- Functions ----------------------------
 
 // Function - Prepare the properties to update in HubSpot
 async function propsToChange(company) {
-  // let properties_dict = {};
   let cik = company["cik"];
   let ticker = company["ticker"];
   let sicNumber = company["sicNumber"];
@@ -90,7 +68,6 @@ async function readFirestore() {
 
 // Function - Update the properties of one company at a time in HubSpot
 async function updateCompToHubSpot(properties_dict) {
-  // let new_options = JSON.stringify(options);
   let hs_companyId = properties_dict["companyId"];
   const url = `https://api.hubapi.com/crm/v3/objects/companies/${hs_companyId}`;
   let options = {
@@ -104,12 +81,12 @@ async function updateCompToHubSpot(properties_dict) {
 
   let responseData;
   const response = await fetch(url, options);
-  if (!response.ok) {
-    console.log(response);
-    throw new Error(
-      `Your Request failed: ${response.status} ${response.statusText} `
-    );
-  }
+  // if (!response.ok) {
+  //   console.log(response);
+  //   throw new Error(
+  //     `Your Request failed: ${response.status} ${response.statusText} `
+  //   );
+  // }
   responseData = await response.json();
   if (responseData.status === "error") {
     throw new Error(responseData.message);
