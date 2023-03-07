@@ -15,28 +15,38 @@ admin.initializeApp({
 firestoreCollection = "public_companies";
 
 // create the options
-let options = {
-  method: "PATCH",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${ACCESS_TOKEN}`,
-  },
-  body: "",
-};
+let properties_dict = {};
+// let options = {
+//   method: "PATCH",
+//   headers: {
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${ACCESS_TOKEN}`,
+//   },
+//   body: { properties: properties_dict },
+// };
+
+//   body: { properties: JSON.stringify(properties_dict) },
 
 // Iterate thru the companies' id & cik to call the function updateCompToHubSpot
 (async () => {
   let companies_list = await readFirestore();
-  console.log(`companies_list.length: ${companies_list.length} `);
   for (let company of companies_list) {
     let cik = company["cik"];
     if (cik == "0000000000") {
       continue;
     }
     let properties_dict = await propsToChange(company);
-    options["body"] = JSON.stringify(properties_dict);
+    // options["body"] = properties_dict;
+    // let options = {
+    //   method: "PATCH",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${ACCESS_TOKEN}`,
+    //   },
+    //   body: { properties: properties_dict },
+    // };
 
-    await updateCompToHubSpot(properties_dict, options);
+    await updateCompToHubSpot(properties_dict);
   }
 })();
 // how to stop the file here
@@ -45,7 +55,7 @@ let options = {
 
 // Function - Prepare the properties to update in HubSpot
 async function propsToChange(company) {
-  let properties_dict = {};
+  // let properties_dict = {};
   let cik = company["cik"];
   let ticker = company["ticker"];
   let sicNumber = company["sicNumber"];
@@ -64,7 +74,6 @@ async function propsToChange(company) {
     Ticker: ticker,
     companyId: companyId,
   };
-
   return properties_dict;
 }
 
@@ -80,16 +89,25 @@ async function readFirestore() {
 }
 
 // Function - Update the properties of one company at a time in HubSpot
-async function updateCompToHubSpot(properties_dict, options) {
+async function updateCompToHubSpot(properties_dict) {
+  // let new_options = JSON.stringify(options);
   let hs_companyId = properties_dict["companyId"];
   const url = `https://api.hubapi.com/crm/v3/objects/companies/${hs_companyId}`;
-  console.log(`url: ${url}) `);
+  let options = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
+    },
+    body: { properties: properties_dict },
+  };
 
   let responseData;
   const response = await fetch(url, options);
   if (!response.ok) {
+    console.log(response);
     throw new Error(
-      `Hey, Your Request failed: ${response.status} ${response.statusText}`
+      `Your Request failed: ${response.status} ${response.statusText} `
     );
   }
   responseData = await response.json();
