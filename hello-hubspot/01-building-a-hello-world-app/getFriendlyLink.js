@@ -11,8 +11,8 @@ admin.initializeApp({
 const db = admin.firestore();
 
 // define the collections
-firestoreCollection = "New_Company_Filings";
-newFirestoreCollection = "Company_Filings";
+firestoreCollection = "Company_Filings";
+newFirestoreCollection = "New_Company_Filings";
 let myGlobalObject = {};
 
 const headers = {
