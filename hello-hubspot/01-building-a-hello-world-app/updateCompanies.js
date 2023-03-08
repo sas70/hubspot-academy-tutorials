@@ -1,6 +1,8 @@
 // Description: Update a company in HubSpot
 // Source: https://developers.hubspot.com/docs/api/crm/companies (Update a company)
 
+// @Omar - TODO- Add firestore to this script to read the companies' id & cik
+
 const hubspot = require("@hubspot/api-client");
 
 require("dotenv").config();
