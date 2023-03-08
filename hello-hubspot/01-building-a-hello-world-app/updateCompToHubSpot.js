@@ -14,8 +14,6 @@ admin.initializeApp({
 });
 firestoreCollection = "public_companies";
 
-let properties_dict = {};
-
 // Iterate thru the companies' id & cik to call the function updateCompToHubSpot
 (async () => {
   let companies_list = await readFirestore();
@@ -35,7 +33,7 @@ let properties_dict = {};
 
 // Function - Prepare the properties to update in HubSpot
 async function propsToChange(company) {
-  // let properties_dict = {};
+  let properties_dict = {};
   let cik = company["cik"];
   let ticker = company["ticker"];
   let sicNumber = company["sicNumber"];
@@ -44,7 +42,7 @@ async function propsToChange(company) {
   let businessFullAddress = company["businessFullAddress"];
   let companyId = company["companyId"];
 
-  properties_internal_names = {
+  let properties_internal_names = {
     fye: "fiscal_year_end_month",
     "street address": "address",
     cik: "cik",
@@ -55,7 +53,7 @@ async function propsToChange(company) {
   };
 
   // create the fields_dict
-  const properties_dict = {
+  properties_dict = {
     [properties_internal_names.fye]: FYE,
     [properties_internal_names["street address"]]: businessFullAddress,
     [properties_internal_names.cik]: cik,
@@ -82,22 +80,26 @@ async function readFirestore() {
 // Function - Update the properties of one company at a time in HubSpot
 async function updateCompToHubSpot(properties_dict) {
   // create the options
-  let options = {
-    method: "PATCH",
+  let headers = {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${ACCESS_TOKEN}`,
     },
   };
-  options["body"] = { inputs: properties_dict };
 
-  // let new_options = JSON.stringify(options);
   let hs_companyId = properties_dict["companyid"];
   const url = `https://api.hubapi.com/crm/v3/objects/companies/${hs_companyId}`;
+  // const url = `https://api.hubapi.com/crm/v3/objects/companies/`;
+
   console.log(url);
-  console.log(options);
+
+  let body = { inputs: { id: hs_companyId, properties: properties_dict } };
+  // let new_body = JSON.stringify(body);
+
+  console.log(body);
   let responseData;
-  const response = await fetch(url, options);
+  const response = await fetch(url, (headers = headers), (body = body));
   if (!response.ok) {
     console.log(response);
     throw new Error(
